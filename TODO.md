@@ -1,0 +1,4 @@
+- [x] Fix Laravel 500 on /history by making Trip->budget casting safe
+- [x] Normalize budget saved in TravelPlannerService to numeric decimal
+- [ ] Update history blade display if needed
+- [ ] (Optional) Add/adjust migration or data cleanup if existing rows contain invalid budget values

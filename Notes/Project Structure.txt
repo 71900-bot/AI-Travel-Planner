@@ -1,0 +1,53 @@
+my-ai-travel-planner/
+├── app/
+│   ├── Http/
+│   │   └── Livewire/
+│   │       ├── TravelForm.php          <-- Handles form state, validation, & AI API calls
+│   │       └── ItineraryDisplay.php    <-- Handles rendering the generated schedule
+│   └── Services/
+│       └── GeminiApiService.php       <-- Dedicated class to handle the AI prompt & response
+│
+├── config/
+│   └── services.php                    <-- Store your AI API keys securely here
+│
+├── resources/
+│   └── views/
+│       ├── components/
+│       │   └── layout.blade.php        <-- Base HTML structure (loads Tailwind/Livewire assets)
+│       ├── livewire/
+│       │   ├── travel-form.blade.php   <-- The exact UI form frontend from your screenshot
+│       │   └── itinerary-display.blade.php <-- The UI for the generated hourly schedule
+│       ├── pdf/
+│       │   └── itinerary.blade.php     <-- Clean HTML template used strictly for PDF export
+│       └── welcome.blade.php           <-- Home page that holds your Livewire components
+│
+├── routes/
+│   └── web.php                         <-- Defines routes for the home page and PDF download
+│
+└── .env                                <-- Holds your secret GEMINI_API_KEY
+
+
+
+app/
+ ├── Http/
+ │    ├── Controllers/
+ │    │     ├── TravelController.php
+ │    │     ├── AIController.php
+ │    │     └── PDFController.php
+ │
+ │    └── Services/
+ │          ├── OpenAIService.php
+ │          ├── TravelPlannerService.php
+ │          └── PDFService.php
+
+resources/
+ ├── views/
+ │    ├── components/
+ │    │     └── travel-form.blade.php
+ │    ├── itinerary/
+ │    │     └── result.blade.php
+ │    ├── layout.blade.php
+ │    └── welcome.blade.php
+
+routes/
+ └── web.php
