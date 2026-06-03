@@ -1,13 +1,10 @@
-FROM php:8.2-cli
+FROM php:8.3-cli
 
-# 安装系统依赖 + zip
 RUN apt-get update && apt-get install -y \
-    unzip \
-    zip \
-    libzip-dev \
-    && docker-php-ext-install zip
+    git unzip libsqlite3-dev
 
-# 安装 Composer
+RUN docker-php-ext-install pdo pdo_sqlite
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
@@ -16,4 +13,8 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+RUN php artisan key:generate --force
+
+EXPOSE 10000
+
+CMD php -S 0.0.0.0:$PORT -t public
