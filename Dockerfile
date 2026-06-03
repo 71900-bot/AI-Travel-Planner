@@ -13,8 +13,6 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN php artisan key:generate --force
-
 EXPOSE 10000
 
 CMD php -S 0.0.0.0:$PORT -t public
