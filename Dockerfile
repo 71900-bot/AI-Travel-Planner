@@ -5,8 +5,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo pdo_sqlite
 
-RUN touch database/database.sqlite
-
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
