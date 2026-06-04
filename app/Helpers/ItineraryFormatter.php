@@ -35,11 +35,20 @@ class ItineraryFormatter
             '/^\s*(?:\?+\s*)?(?:🏨\s*)?Accommodation\s*Recommendations\s*(:|\s*)$/mi' => '<div class="bg-purple-100 text-purple-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">🏨 Accommodation Recommendations</div>',
             '/^\s*(?:\?+\s*)?(?:📅\s*)?Day-by-Day\s*Itinerary\s*(:|\s*)$/mi' => '<div class="bg-green-100 text-green-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">📅 Day-by-Day Itinerary</div>',
             '/^\s*(?:\?+\s*)?(?:💰\s*)?Budget\s*Breakdown\s*(:|\s*)$/mi' => '<div class="bg-yellow-100 text-yellow-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">💰 Budget Breakdown</div>',
-            '/^\s*(?:\?+\s*)?(?:🍽️\s*)?Food\s*(?:&|and)\s*Dining\s*(:|\s*)$/mi' => '<div class="bg-red-100 text-red-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">🍽️ Food & Dining</div>',
             '/^\s*(?:\?+\s*)?(?:📱\s*)?Essential\s*Apps\s*(?:&|and)\s*Services\s*(:|\s*)$/mi' => '<div class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">📱 Essential Apps & Services</div>',
             '/^\s*(?:\?+\s*)?(?:🆘\s*)?Emergency\s*Information\s*(:|\s*)$/mi' => '<div class="bg-red-200 text-red-900 font-bold px-4 py-3 rounded-lg mb-4 text-lg">🆘 Emergency Information</div>',
             '/^\s*(?:\?+\s*)?(?:💡\s*)?Practical\s*Tips\s*(:|\s*)$/mi' => '<div class="bg-amber-100 text-amber-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">💡 Practical Tips</div>',
         ];
+
+        $text = preg_replace_callback(
+            '/^\s*(?:\?+\s*)?(?:🍽️\s*)?Food\s*(?:&|and)\s*Dining(?:\s*[:\-–—]\s*|\s+)?(.*)$/mi',
+            function ($matches) {
+                $content = trim($matches[1]);
+                return '<div class="bg-red-100 text-red-800 font-bold px-4 py-3 rounded-lg mb-4 text-lg">🍽️ Food & Dining</div>' . ($content !== '' ? "\n" . $content : '');
+            },
+            $text
+        );
+        
         $text = preg_replace(array_keys($patterns), array_values($patterns), $text);
 
         // Fix stray leading ". " at the start of lines (e.g. ". Hospital and clinic:"
