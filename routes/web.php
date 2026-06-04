@@ -9,17 +9,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 
-// Explicit Livewire route registration (auto-discovered in Laravel 11+, but explicit for safety)
-\Livewire\Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/livewire/livewire.js', $handle);
-});
-\Livewire\Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/livewire/update', $handle);
-});
-\Livewire\Livewire::setAssetRoute(function ($handle) {
-    return Route::get('/livewire/livewire.css', $handle);
-});
-
 Route::get('/', [HomeController::class, 'index']);
 
 
