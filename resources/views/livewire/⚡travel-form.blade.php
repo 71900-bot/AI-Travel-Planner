@@ -115,12 +115,14 @@ new class extends Component
         $prompt .= "- Use numbered lists for the Day-by-Day itinerary (e.g. \"1. Morning ...\", \"2. Afternoon ...\", \"3. Evening ...\").\n\n";
         $prompt .= "Use clear section headings with emojis. English only.";
 
+        $ollamaHost = env('OLLAMA_HOST', 'http://127.0.0.1:11434');
+
         try {
             // Check if Ollama server is running
             try {
-                $check = Http::timeout(5)->get('http://127.0.0.1:11434/api/tags');
+                $check = Http::timeout(5)->get($ollamaHost . '/api/tags');
                 if (!$check->successful()) {
-                    $this->errorMessage = 'Ollama server is not responding. Please make sure Ollama is running on http://127.0.0.1:11434';
+                    $this->errorMessage = 'Ollama server is not responding. Please make sure Ollama is running on ' . $ollamaHost;
                     return;
                 }
 
@@ -141,11 +143,11 @@ new class extends Component
                     return;
                 }
             } catch (\Exception $e) {
-                $this->errorMessage = 'Cannot connect to Ollama server. Please make sure Ollama is running on http://127.0.0.1:11434';
+                $this->errorMessage = 'Cannot connect to Ollama server. Please make sure Ollama is running on ' . $ollamaHost;
                 return;
             }
 
-            $response = Http::timeout(600)->post('http://127.0.0.1:11434/api/generate', [
+            $response = Http::timeout(600)->post($ollamaHost . '/api/generate', [
                 'model' => 'llama3',
                 'prompt' => $prompt,
                 'stream' => false,
@@ -265,68 +267,70 @@ new class extends Component
 
     <div class="p-6 space-y-5">
 
-        @if($errorMessage)
-            <div class="bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-                <p>{{ $errorMessage }}</p>
-            </div>
-        @endif
+        <form wire:submit.prevent="generate">
 
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            @if($errorMessage)
+                <div class="bg-red-100 text-red-700 p-3 rounded-lg text-sm">
+                    <p>{{ $errorMessage }}</p>
+                </div>
+            @endif
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-700 p-3 rounded-lg text-sm">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label for="fromCity" class="text-xs font-bold uppercase tracking-wide text-slate-500">From City</label>
+                    <input id="fromCity" name="fromCity" type="text" wire:model.lazy="fromCity" placeholder="e.g. Kuala Lumpur"
+                           class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
+                </div>
+                <div class="space-y-1">
+                    <label for="toCity" class="text-xs font-bold uppercase tracking-wide text-slate-500">To City</label>
+                    <input id="toCity" name="toCity" type="text" wire:model.lazy="toCity" placeholder="e.g. Penang"
+                           class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label for="duration" class="text-xs font-bold uppercase tracking-wide text-slate-500">Duration</label>
+                    <input id="duration" name="duration" type="text" wire:model.lazy="duration" placeholder="e.g. 3 days"
+                           class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
+                </div>
+                <div class="space-y-1">
+                    <label for="travelers" class="text-xs font-bold uppercase tracking-wide text-slate-500">Travelers</label>
+                    <input id="travelers" name="travelers" type="number" wire:model="travelers" placeholder="e.g. 2"
+                           class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
+                </div>
+            </div>
+
             <div class="space-y-1">
-                <label class="text-xs font-bold uppercase tracking-wide text-slate-500">From City</label>
-                <input type="text" wire:model.lazy="fromCity" placeholder="e.g. Kuala Lumpur"
+                <label for="budget" class="text-xs font-bold uppercase tracking-wide text-slate-500">Budget</label>
+                <input id="budget" name="budget" type="text" wire:model.lazy="budget" placeholder="e.g. 800 (USD) or 2500 (EUR) or RM 3000 or $1200"
                        class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
             </div>
-            <div class="space-y-1">
-                <label class="text-xs font-bold uppercase tracking-wide text-slate-500">To City</label>
-                <input type="text" wire:model.lazy="toCity" placeholder="e.g. Penang"
-                       class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-1">
-                <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Duration</label>
-                <input type="text" wire:model.lazy="duration" placeholder="e.g. 3 days"
-                       class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wide text-slate-500 block">Travel Style</label>
+                <div class="grid grid-cols-2 gap-2 text-sm text-slate-700">
+                    <label for="travelStyleAdventure" class="flex items-center gap-2 cursor-pointer"><input id="travelStyleAdventure" name="travelStyles[]" type="checkbox" wire:model="travelStyles" value="Adventure" class="rounded text-blue-600"> Adventure</label>
+                    <label for="travelStyleRelaxing" class="flex items-center gap-2 cursor-pointer"><input id="travelStyleRelaxing" name="travelStyles[]" type="checkbox" wire:model="travelStyles" value="Relaxing" class="rounded text-blue-600"> Relaxing</label>
+                    <label for="travelStyleCultural" class="flex items-center gap-2 cursor-pointer"><input id="travelStyleCultural" name="travelStyles[]" type="checkbox" wire:model="travelStyles" value="Cultural" class="rounded text-blue-600"> Cultural</label>
+                    <label for="travelStyleFamily" class="flex items-center gap-2 cursor-pointer"><input id="travelStyleFamily" name="travelStyles[]" type="checkbox" wire:model="travelStyles" value="Family" class="rounded text-blue-600"> Family-friendly</label>
+                </div>
             </div>
-            <div class="space-y-1">
-                <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Travelers</label>
-                <input type="number" wire:model="travelers" placeholder="e.g. 2"
-                       class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
-            </div>
-        </div>
 
-        <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Budget</label>
-            <input type="text" wire:model.lazy="budget" placeholder="e.g. 800 (USD) or 2500 (EUR) or RM 3000 or $1200"
-                   class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 placeholder-slate-300">
-        </div>
-
-        <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wide text-slate-500 block">Travel Style</label>
-            <div class="grid grid-cols-2 gap-2 text-sm text-slate-700">
-                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="travelStyles" value="Adventure" class="rounded text-blue-600"> Adventure</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="travelStyles" value="Relaxing" class="rounded text-blue-600"> Relaxing</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="travelStyles" value="Cultural" class="rounded text-blue-600"> Cultural</label>
-                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="travelStyles" value="Family" class="rounded text-blue-600"> Family-friendly</label>
-            </div>
-        </div>
-
-        <button
-            wire:click="generate"
-            wire:loading.attr="disabled"
-            class="w-full bg-blue-500 hover:bg-blue-600 transition text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-blue-200">
+            <button
+                type="submit"
+                wire:loading.attr="disabled"
+                class="w-full bg-blue-500 hover:bg-blue-600 transition text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-blue-200">
 
             <span wire:loading.remove="generate">
                 Generate Itinerary 🚀
@@ -336,6 +340,7 @@ new class extends Component
                 Generating...
             </span>
         </button>
+        </form>
 
         @if($result)
             <div class="mt-6 bg-green-50 border border-green-200 rounded-2xl p-6 shadow-lg">
