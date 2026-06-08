@@ -116,11 +116,14 @@ new class extends Component
         $prompt .= "Use clear section headings with emojis. English only.";
 
         try {
+            $ollamaHost = env('OLLAMA_HOST', 'http://127.0.0.1:11434');
+            $ollamaApi = rtrim($ollamaHost, '/') . '/api';
+
             // Check if Ollama server is running
             try {
-                $check = Http::timeout(5)->get('http://127.0.0.1:11434/api/tags');
+                $check = Http::timeout(5)->get($ollamaApi . '/tags');
                 if (!$check->successful()) {
-                    $this->errorMessage = 'Ollama server is not responding. Please make sure Ollama is running on http://127.0.0.1:11434';
+                    $this->errorMessage = 'Ollama server is not responding. Please make sure Ollama is reachable at ' . $ollamaHost;
                     return;
                 }
 
@@ -141,11 +144,11 @@ new class extends Component
                     return;
                 }
             } catch (\Exception $e) {
-                $this->errorMessage = 'Cannot connect to Ollama server. Please make sure Ollama is running on http://127.0.0.1:11434';
+                $this->errorMessage = 'Cannot connect to Ollama server. Please make sure Ollama is reachable at ' . $ollamaHost;
                 return;
             }
 
-            $response = Http::timeout(600)->post('http://127.0.0.1:11434/api/generate', [
+            $response = Http::timeout(600)->post($ollamaApi . '/generate', [
                 'model' => 'llama3',
                 'prompt' => $prompt,
                 'stream' => false,
