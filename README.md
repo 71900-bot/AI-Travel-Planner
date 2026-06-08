@@ -57,3 +57,27 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# 🌍 AI Travel Planner Web Application
+Excited to share my latest project — an AI-powered travel planning web application built with Laravel, Vite, and SQLite.
+
+The platform helps users generate personalized, day-by-day travel itineraries based on inputs like origin, destination, duration, number of travelers, and budget. It also stores generated trips in a database, allowing users to revisit itinerary history and manage trips through a clean CRUD-driven UX.
+
+## ✅ Skills & Technologies
+1. Full-Stack Web Development
+2. PHP & Laravel MVC Architecture
+3. LLM integration using Ollama (local inference)
+4. SQLite Database Management
+5. JavaScript & Responsive UI Design
+6. Route Handling & Form Processing
+7. CRUD Operations
+
+## 🔥 Key Features
+1. AI-generated itineraries with Morning / Afternoon / Evening structure
+2. Personalized trip naming and budget handling
+3. Itinerary history persisted via SQLite
+4. Clean architecture using Laravel services/models
+5. Responsive, user-friendly interface
+6. This project strengthened my ability to build end-to-end web applications and integrate AI features in a modular way.
+
+#Laravel #PHP #FullStackDeveloper #WebDevelopment #ArtificialIntelligence #SQLite #Portfolio #OpenToWork
